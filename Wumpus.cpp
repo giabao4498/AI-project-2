@@ -64,6 +64,7 @@ vector<Position> bfs(vector<vector<bool> >& matrix,const Position& source,Positi
 		res.push_back(destination);
 		destination=pre[destination.first][destination.second];
 	}
+	res.pop_back();
 	reverse(res.begin(),res.end());
 	return res;
 }
