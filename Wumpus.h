@@ -17,6 +17,10 @@ const char STENCH='S';
 const char AGENT='A';
 const char SEPARATED='.';
 const Position NULL_POS={-1,-1};
+const int MIN_X = 0;
+const int MAX_X = 10;
+const int MIN_Y = 0;
+const int MAX_Y = 10;
 struct Cell
 {
 	bool check[5]={false,false,false,false,false};
