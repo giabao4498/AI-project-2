@@ -34,3 +34,36 @@ void inp(int& N,vector<vector<Cell> >& a)
 	a.resize(N+2);
 	a.back()=a[0];
 }
+vector<Position> bfs(vector<vector<bool> >& matrix,const Position& source,Position destination)
+{
+	const short LIM_DIRECTION=4;
+	const pair<short,short> DIRECTION[LIM_DIRECTION]={{-1,0},{0,1},{1,0},{0,-1}};
+	vector<vector<Position> > pre;
+	pre.resize(matrix.size());
+	int i,j;
+	for(i=0;i<pre.size();++i)
+	for(j=0;j<matrix[i].size();++j) pre[i].push_back(NULL_POS);
+	queue<Position> q;
+	q.push(source);
+	do
+	{
+		for(i=0;i<LIM_DIRECTION;++i)
+		if (matrix[q.front().first+DIRECTION[i].first][q.front().second+DIRECTION[i].second])
+		{
+			if (q.front()==destination) break;
+			q.push({q.front().first+DIRECTION[i].first,q.front().second+DIRECTION[i].second});
+			matrix[q.back().first][q.back().second]=false;
+			pre[q.back().first][q.back().second]=q.front();
+		}
+		q.pop();
+	}
+	while (!q.empty());
+	vector<Position> res;
+	while (pre[destination.first][destination.second]!=NULL_POS)
+	{
+		res.push_back(destination);
+		destination=pre[destination.first][destination.second];
+	}
+	reverse(res.begin(),res.end());
+	return res;
+}
