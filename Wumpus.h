@@ -38,4 +38,4 @@ public:
 	}
 };
 void inp(int& N,vector<vector<Cell> >& a);
-vector<Position> bfs(vector<vector<bool> >& matrix,const Position& source, Position destination);
+vector<Position> bfs(vector<vector<bool> > matrix,const Position& source, Position destination);

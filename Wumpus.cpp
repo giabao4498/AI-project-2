@@ -34,7 +34,7 @@ void inp(int& N,vector<vector<Cell> >& a)
 	a.resize(N+2);
 	a.back()=a[0];
 }
-vector<Position> bfs(vector<vector<bool> >& matrix,const Position& source, Position destination)
+vector<Position> bfs(vector<vector<bool> > matrix,const Position& source, Position destination)
 {
 	vector<vector<Position> > pre;
 	pre.resize(matrix.size());
@@ -43,19 +43,21 @@ vector<Position> bfs(vector<vector<bool> >& matrix,const Position& source, Posit
 	for(j=0;j<matrix[i].size();++j) pre[i].push_back(NULL_POS);
 	queue<Position> q;
 	q.push(source);
+	matrix[source.first][source.second]=false;
 	do
 	{
 		for(i=0;i<LIM_DIRECTION;++i)
 		if (matrix[q.front().first+DIRECTION[i].first][q.front().second+DIRECTION[i].second])
 		{
-			if (q.front()==destination) break;
 			q.push({q.front().first+DIRECTION[i].first,q.front().second+DIRECTION[i].second});
-			matrix[q.back().first][q.back().second]=false;
 			pre[q.back().first][q.back().second]=q.front();
+			if (q.back()==destination) goto label;
+			matrix[q.back().first][q.back().second]=false;
 		}
 		q.pop();
 	}
 	while (!q.empty());
+	label:
 	vector<Position> res;
 	while (pre[destination.first][destination.second]!=NULL_POS)
 	{
