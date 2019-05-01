@@ -22,7 +22,7 @@ void inp(int& N,vector<vector<Cell> >& a)
 					case PIT: a[i].back().check[1]=true; break;
 					case BREEZE: a[i].back().check[2]=true; break;
 					case STENCH: a[i].back().check[3]=true; break;
-					case AGENT: a[i].back().check[4]=true;
+					case GOLD: a[i].back().check[4]=true;
 				}
 				++j;
 			}
@@ -34,10 +34,8 @@ void inp(int& N,vector<vector<Cell> >& a)
 	a.resize(N+2);
 	a.back()=a[0];
 }
-vector<Position> bfs(vector<vector<bool> >& matrix,const Position& source,Position destination)
+vector<Position> bfs(vector<vector<bool> >& matrix,const Position& source, Position destination)
 {
-	const short LIM_DIRECTION=4;
-	const pair<short,short> DIRECTION[LIM_DIRECTION]={{-1,0},{0,1},{1,0},{0,-1}};
 	vector<vector<Position> > pre;
 	pre.resize(matrix.size());
 	int i,j;

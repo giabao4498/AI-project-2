@@ -7,17 +7,24 @@ int N;
 vector<vector<Cell>> a;
 Position current;
 vector<Position> path;
-vector<pair<Position, Cell>> kb;
+vector<pair<Position, Symbol>> kb;
 
 void init();
 void testInput();
 void run();
-void PL(vector<pair<Position, Cell>> newLaw);
+void PL(vector<pair<Position, Symbol>> newLaw);
+bool entail(Symbol x, Symbol y, Symbol& res);
+bool inRange(int x, int y);
+vector<pair<Position, Symbol>> generateLaw(const Position& current);
+void calculateScore(Position current);
+int score = 0;
+int step = 0;
 
 int main()
 {
 	init();
-	testInput();
+	//testInput();
+	run();
 }
 
 void init() {
@@ -35,6 +42,10 @@ void init() {
 
 	current = make_pair(1, 1);
 	path.push_back(current);
+
+	kb.push_back(make_pair(make_pair(1, 1), Symbol(0, 0)));
+	kb.push_back(make_pair(make_pair(2, 1), Symbol(0, 0)));
+	kb.push_back(make_pair(make_pair(1, 2), Symbol(0, 0)));
 }
 
 void testInput() {
@@ -48,46 +59,108 @@ void testInput() {
 			if (a[i][j].check[1]) cout << PIT;
 			if (a[i][j].check[2]) cout << BREEZE;
 			if (a[i][j].check[3]) cout << STENCH;
-			if (a[i][j].check[4]) cout << AGENT;
+			if (a[i][j].check[4]) cout << GOLD;
 			cout << EMPTYROOM << SEPARATED;
 		}
 		cout << endl;
 	}
 }
 
+vector<pair<Position, Symbol>> generateLaw(const Position& current) {
+	vector<pair<Position, Symbol>> res;
+	for (int i = 0; i < LIM_DIRECTION; i++)
+		if (inRange(current.first + DIRECTION[i].first, current.second + DIRECTION[i].second)) 
+			if (!limitArea[current.first][current.second]) {
+				if (a[current.first][current.second].check[2] && a[current.first][current.second].check[3])
+					res.push_back(make_pair(make_pair(current.first + DIRECTION[i].first, current.second + DIRECTION[i].second), Symbol(1, 1)));
+				else if (a[current.first][current.second].check[2])
+					res.push_back(make_pair(make_pair(current.first + DIRECTION[i].first, current.second + DIRECTION[i].second), Symbol(1,-1)));
+				else if (a[current.first][current.second].check[3])
+					res.push_back(make_pair(make_pair(current.first + DIRECTION[i].first, current.second + DIRECTION[i].second), Symbol(-1, 1)));
+			}
+	return res;
+}
+
+void calculateScore(Position current) {
+	if (a[current.first][current.second].check[4])
+		score += 100;
+}
+
+bool inRange(int x, int y) {
+	return (x >= MIN_X && x <= MAX_Y && y >= MIN_X && y <= MAX_Y);
+}
+
 void run() {
 	Position destination;
-	vector<Position> newPath;
+	vector<Position> newPath, home;
+	vector<pair<Position, Symbol>> newLaw;
 	while (!safeArea.empty()) {
 
 		destination = safeArea.front();
 		safeArea.pop();
 		newPath = bfs(limitArea, current, destination);
+		home = bfs(limitArea, destination, make_pair(1, 1));
+		if (step + newPath.size() + home.size() > MAX_STEP) {
+			if (current != make_pair(1, 1))
+				path.insert(path.end(), home.begin(), home.end());
+			break;
+		}
 		path.insert(path.end(), newPath.begin(), newPath.end());
 		current = destination;
-
-		
+		calculateScore(current);
+		newLaw = generateLaw(current);
 	}
 }
 
-void entail(Cell x, Cell y) {
-	
+bool entail(Symbol x, Symbol y, Symbol& res) {
+	bool check = false;
+	res = x;
+	if ((x.P = 1 && y.P == 0) || (x.P = 0 && y.P == 1)) {
+		check = true;
+		res.P = -1;
+	}
+	if ((x.W = 1 && y.W == 0) || (x.W = 0 && y.W == 1)) {
+		check = true;
+		res.W = -1;
+	}
+	return check;
 }
 
-void PL(vector<pair<Position, Cell>> newLaw) {
-	int kbSize, newLawSize;
-	vector<pair<Position, Cell>> res;
-	Cell tmp;
-	if (kb.empty()) {
-		kb.insert(kb.end(), newLaw.begin(), newLaw.end());
-	}
+bool isSafe(Symbol x) {
+	if ((x.P == -1 && x.W == 0) || (x.P == 0 && x.W == -1))
+		return true;
+	return false;
+}
+
+void PL(vector<pair<Position, Symbol>> newLaw) {
+	int kbSize;
+	vector<pair<Position, Symbol>> res;
+	Symbol tmp;
+	bool isExisted;
 	do {
 		kbSize = kb.size();
-		newLawSize = newLaw.size();
+		res.clear();
 		for (int i = 0; i < kbSize; i++)
-			for (int j = 0; j < newLawSize; j++)
+			for (int j = 0; j < newLaw.size(); j++)
 				if (kb[i].first == newLaw[j].first) {
-					
+					if (entail(kb[i].second, newLaw[j].second, tmp)) {
+						isExisted = false;
+						if (!limitArea[kb[i].first.first][kb[i].first.first] && isSafe(tmp)) {
+							safeArea.push(kb[i].first);
+							limitArea[kb[i].first.first][kb[i].first.first] = true;
+						}
+						for (int k = 0; k < kb.size(); k++)
+							if (kb[k].first == kb[i].first && kb[k].second == tmp) {
+								isExisted = true;
+								break;
+							}
+						if (!isExisted) {
+							res.push_back(make_pair(kb[i].first, tmp));
+							kb.push_back(make_pair(kb[i].first, tmp));
+						}
+					}
 				}
+		newLaw.clear();
+		newLaw = res;
 	} while (res.size() != 0);
 }
