@@ -22,6 +22,7 @@ int step = 0;
 
 int main()
 {
+	inp(N, a);
 	init();
 	//testInput();
 	run();
@@ -68,16 +69,26 @@ void testInput() {
 
 vector<pair<Position, Symbol>> generateLaw(const Position& current) {
 	vector<pair<Position, Symbol>> res;
-	for (int i = 0; i < LIM_DIRECTION; i++)
-		if (inRange(current.first + DIRECTION[i].first, current.second + DIRECTION[i].second)) 
-			if (!limitArea[current.first][current.second]) {
-				if (a[current.first][current.second].check[2] && a[current.first][current.second].check[3])
-					res.push_back(make_pair(make_pair(current.first + DIRECTION[i].first, current.second + DIRECTION[i].second), Symbol(1, 1)));
-				else if (a[current.first][current.second].check[2])
-					res.push_back(make_pair(make_pair(current.first + DIRECTION[i].first, current.second + DIRECTION[i].second), Symbol(1,-1)));
-				else if (a[current.first][current.second].check[3])
-					res.push_back(make_pair(make_pair(current.first + DIRECTION[i].first, current.second + DIRECTION[i].second), Symbol(-1, 1)));
-			}
+	if (a[current.first][current.second].check[2] || a[current.first][current.second].check[3]) {
+		for (int i = 0; i < LIM_DIRECTION; i++)
+			if (inRange(current.first + DIRECTION[i].first, current.second + DIRECTION[i].second))
+				if (!limitArea[current.first + DIRECTION[i].first][current.second + DIRECTION[i].second]) {
+					if (a[current.first][current.second].check[2] && a[current.first][current.second].check[3])
+						res.push_back(make_pair(make_pair(current.first + DIRECTION[i].first, current.second + DIRECTION[i].second), Symbol(1, 1)));
+					else if (a[current.first][current.second].check[2])
+						res.push_back(make_pair(make_pair(current.first + DIRECTION[i].first, current.second + DIRECTION[i].second), Symbol(1, -1)));
+					else if (a[current.first][current.second].check[3])
+						res.push_back(make_pair(make_pair(current.first + DIRECTION[i].first, current.second + DIRECTION[i].second), Symbol(-1, 1)));
+				}
+	}
+	else {
+		for (int i = 0; i < LIM_DIRECTION; i++)
+			if (inRange(current.first + DIRECTION[i].first, current.second + DIRECTION[i].second))
+				if (!limitArea[current.first + DIRECTION[i].first][current.second + DIRECTION[i].second]) {
+					limitArea[current.first + DIRECTION[i].first][current.second + DIRECTION[i].second] = true;
+					safeArea.push(make_pair(current.first + DIRECTION[i].first, current.second + DIRECTION[i].second));
+				}
+	}
 	return res;
 }
 
@@ -109,6 +120,7 @@ void run() {
 		current = destination;
 		calculateScore(current);
 		newLaw = generateLaw(current);
+		PL(newLaw);
 	}
 }
 
@@ -140,6 +152,16 @@ void PL(vector<pair<Position, Symbol>> newLaw) {
 	do {
 		kbSize = kb.size();
 		res.clear();
+		for (int i = 0; i < newLaw.size(); i++) {
+			isExisted = false;
+			for (int j = 0; j < kb.size(); j++)
+				if (newLaw[i].first == kb[j].first && newLaw[i].second == kb[j].second) {
+					isExisted = true;
+					break;
+				}
+			if (!isExisted)
+				kb.push_back(newLaw[i]);
+		}
 		for (int i = 0; i < kbSize; i++)
 			for (int j = 0; j < newLaw.size(); j++)
 				if (kb[i].first == newLaw[j].first) {

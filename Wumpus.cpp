@@ -36,6 +36,9 @@ void inp(int& N,vector<vector<Cell> >& a)
 }
 vector<Position> bfs(vector<vector<bool> > matrix,const Position& source, Position destination)
 {
+	vector<Position> res;
+	if (source == destination)
+		return res;
 	vector<vector<Position> > pre;
 	pre.resize(matrix.size());
 	int i,j;
@@ -58,13 +61,11 @@ vector<Position> bfs(vector<vector<bool> > matrix,const Position& source, Positi
 	}
 	while (!q.empty());
 	label:
-	vector<Position> res;
 	while (pre[destination.first][destination.second]!=NULL_POS)
 	{
 		res.push_back(destination);
 		destination=pre[destination.first][destination.second];
 	}
-	res.pop_back();
 	reverse(res.begin(),res.end());
 	return res;
 }
