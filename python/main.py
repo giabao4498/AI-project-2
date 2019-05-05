@@ -1,6 +1,7 @@
 from sympy import Symbol, symbols, false, true
 from sympy.logic.boolalg import ITE, And, Xor, Or, Not
 from sympy.logic.inference import satisfiable
+import turtle
 
 A = []
 N = 0
@@ -120,7 +121,6 @@ def run():
 	while (step < MAX_STEP and start < len(isExplored)):
 		newPath = bfs(current,isExplored[start])
 		home = bfs(isExplored[start],exit)
-		print(str(len(newPath)) + ' ' + str(len(home)) + ' ' + str(step))
 		if (2*len(newPath)+len(home)+step<=MAX_STEP):
 			for i in newPath:
 				path.append(i)
@@ -160,14 +160,109 @@ def input():
 				check = False
 			else:
 				A.append(i.split('.'))
-		
+
+class Pen(turtle.Turtle):
+	def __init__(self):
+		turtle.Turtle.__init__(self)
+		self.shape("square")
+		self.color("white")
+		self.penup()
+		self.speed(0)
+
+class Wumpus(turtle.Turtle):
+	def __init__(self, x, y):
+		turtle.Turtle.__init__(self)
+		self.shape("square")
+		self.color("red")
+		self.penup()
+		self.speed(0)
+		self.goto(x, y)
+
+class Pit(turtle.Turtle):
+	def __init__(self, x, y):
+		turtle.Turtle.__init__(self)
+		self.shape("square")
+		self.color("green")
+		self.penup()
+		self.speed(0)
+		self.goto(x, y)
+
+class Gold(turtle.Turtle):
+	def __init__(self, x, y):
+		turtle.Turtle.__init__(self)
+		self.shape("square")
+		self.color("yellow")
+		self.penup()
+		self.speed(0)
+		self.goto(x, y)
+	
+	def destroy(self):
+		self.goto(2000, 2000)
+		self.hideturtle()
+
+class Agent(turtle.Turtle):
+	def __init__(self):
+		turtle.Turtle.__init__(self)
+		self.shape("square")
+		self.color("blue")
+		self.penup()
+		self.speed(1)
+
+	def is_collision(self, other):
+		if self.xcor() == other.xcor() and self.ycor() == other.ycor():
+			return True
+		return False
+
+def setup():
+	world = turtle.Screen()
+	world.bgcolor('black')
+	world.title('Wumpus world')
+	world.setup(500,500)
+
+	wumpus = []
+	pit = []
+	gold = []
+
+	pen = Pen()
+	agent = Agent()
+
+	for i in range(N):
+		for j in range(N):
+			if 'P' in A[i][j]:
+				pit.append(Pit(i*24,j*24))
+			elif 'W' in A[i][j]:
+				wumpus.append(Wumpus(i*24,j*24))
+			elif 'G' in A[i][j]:
+				gold.append(Gold(i*24,j*24))
+			else:
+				pen.goto(i*24,j*24)
+				pen.stamp()
+
+	for i in path:
+		agent.goto(i[0]*24,i[1]*24)
+		for g in gold:
+			if agent.is_collision(g):
+				g.destroy()
+				gold.remove(g)
+				pen.goto(agent.xcor(),agent.ycor())
+				pen.stamp()
+
+def base1():
+	global path
+	for i in path:
+		i[0] = i[0]+1
+		i[1] = i[1]+1
+
 def main():
 	input()
 	init()
 	run()
-	print(score)
-	print(step)
-	print(path)
 	
+	print('Score = '+str(score))
+	print('Path = ')
+	print(path)
+
 if __name__ == '__main__':
 	main()
+	setup()
+	
