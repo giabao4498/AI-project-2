@@ -126,6 +126,7 @@ def run():
 				path.append(i)
 			step = step + len(newPath)
 		else:
+			home = bfs(current,exit)
 			for i in home:
 				path.append(i)
 			step = step + len(home)
@@ -148,6 +149,7 @@ def run():
 		calculateScore(current)
 		if start == len(isExplored):
 			home = bfs(current,exit)
+			print(home)
 			for i in home:
 				path.append(i)
 			step = step + len(home)
@@ -187,7 +189,7 @@ class Wumpus(turtle.Turtle):
 class Pit(turtle.Turtle):
 	def __init__(self, x, y):
 		turtle.Turtle.__init__(self)
-		self.shape("square")
+		self.shape("circle")
 		self.color("black")
 		self.penup()
 		self.speed(0)
@@ -201,10 +203,6 @@ class Gold(turtle.Turtle):
 		self.penup()
 		self.speed(0)
 		self.goto(x, y)
-	
-	def destroy(self):
-		self.goto(2000, 2000)
-		self.hideturtle()
 
 class Agent(turtle.Turtle):
 	def __init__(self):
@@ -244,14 +242,12 @@ def setup():
 				pen.goto(i*24,j*24)
 				pen.stamp()
 
+	pen.color('green')
+
 	for i in path:
 		agent.goto(i[0]*24,i[1]*24)
-		for g in gold:
-			if agent.is_collision(g):
-				g.destroy()
-				gold.remove(g)
-				pen.goto(agent.xcor(),agent.ycor())
-				pen.stamp()
+		pen.goto(i[0]*24,i[1]*24)
+		pen.stamp()
 
 def output():
 	outputPath = []
