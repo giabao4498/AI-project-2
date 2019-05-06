@@ -147,6 +147,7 @@ def run():
 			start = start+1
 		calculateScore(current)
 		if start == len(isExplored):
+			home = bfs(current,exit)
 			for i in home:
 				path.append(i)
 			step = step + len(home)
