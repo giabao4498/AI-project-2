@@ -146,6 +146,10 @@ def run():
 		if start < len(isExplored):
 			start = start+1
 		calculateScore(current)
+		if start == len(isExplored):
+			for i in home:
+				path.append(i)
+			step = step + len(home)
 	
 def input():
 	global A
