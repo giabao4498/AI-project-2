@@ -1,11 +1,11 @@
 10
-G.G.G.G.G.G.G.G.G.G
-G.G.W.G.G.G.G.G.G.G
-G.G.G.G.G.G.G.W.G.G
-G.S.-.-.-.-.G.-.-.G
+G.G.GS.G.G.G.G.G.G.G
+G.GS.W.GS.G.G.G.GS.G.G
+G.G.GS.G.G.G.GS.W.GS.G
+G.S.-.-.-.-.G.S.-.G
 S.W.S.-.G.-.-.-.-.G
 G.S.S.-.A.-.G.-.-.G
-G.s.W.S.-.-.-.S.-.G
+G.S.W.S.-.-.-.S.-.G
 G.S.S.-.G.-.S.W.S.G
 S.W.S.-.-.-.-.S.-.G
 G.S.G.G.G.G.G.G.G.G
