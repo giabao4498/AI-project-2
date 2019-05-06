@@ -160,6 +160,7 @@ def input():
 				check = False
 			else:
 				A.append(i.split('.'))
+	f.close()
 
 class Pen(turtle.Turtle):
 	def __init__(self):
@@ -182,7 +183,7 @@ class Pit(turtle.Turtle):
 	def __init__(self, x, y):
 		turtle.Turtle.__init__(self)
 		self.shape("square")
-		self.color("green")
+		self.color("black")
 		self.penup()
 		self.speed(0)
 		self.goto(x, y)
@@ -203,7 +204,7 @@ class Gold(turtle.Turtle):
 class Agent(turtle.Turtle):
 	def __init__(self):
 		turtle.Turtle.__init__(self)
-		self.shape("square")
+		self.shape("turtle")
 		self.color("blue")
 		self.penup()
 		self.speed(1)
@@ -215,7 +216,7 @@ class Agent(turtle.Turtle):
 
 def setup():
 	world = turtle.Screen()
-	world.bgcolor('black')
+	world.bgcolor('pink')
 	world.title('Wumpus world')
 	world.setup(500,500)
 
@@ -247,22 +248,29 @@ def setup():
 				pen.goto(agent.xcor(),agent.ycor())
 				pen.stamp()
 
-def base1():
-	global path
+def output():
+	outputPath = []
 	for i in path:
-		i[0] = i[0]+1
-		i[1] = i[1]+1
+			outputPath.append([i[0]+1,i[1]+1])
+	with open('result.txt','w') as f:
+		f.write('Score = '+str(score)+'\n')
+		f.write('Path = ')
+		f.write(str(outputPath))
+
+def description():
+	print('Blue: Agent')
+	print('Red: Wumpus')
+	print('Yellow: Gold')
+	print('Black: Pit')
 
 def main():
 	input()
 	init()
 	run()
-	
-	print('Score = '+str(score))
-	print('Path = ')
-	print(path)
+	description()
+	setup()
+	output()
 
 if __name__ == '__main__':
 	main()
-	setup()
 	
